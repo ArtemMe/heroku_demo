@@ -8,7 +8,7 @@ class HelloWorldController {
 
     @GetMapping(HELLO_PATH)
     fun getHello(): String {
-       return "hello"
+        return "hello"
     }
 
     companion object {
