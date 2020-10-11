@@ -3,11 +3,10 @@ package com.mezh.heroku_demo.services
 import com.mezh.heroku_demo.dto.MessageDto
 import com.mezh.heroku_demo.repository.MessageRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.interceptor.MethodMapTransactionAttributeSource
 
 @Service
 class MessageService(
-        val messageRepository: MessageRepository
+        private val messageRepository: MessageRepository
 ) {
     fun saveMessage(text: String?) {
         messageRepository.save(

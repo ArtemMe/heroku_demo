@@ -5,7 +5,7 @@ import org.springframework.boot.runApplication
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import org.telegram.telegrambots.ApiContextInitializer
 
-@EnableMongoRepositories(basePackages = ["com.mezh.heroku_demo"])
+@EnableMongoRepositories
 @SpringBootApplication
 class HerokuDemoApplication
 
