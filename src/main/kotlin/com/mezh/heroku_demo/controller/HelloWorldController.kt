@@ -12,6 +12,6 @@ class HelloWorldController {
     }
 
     companion object {
-        const val HELLO_PATH = "/"
+        const val HELLO_PATH = "/hello"
     }
 }
