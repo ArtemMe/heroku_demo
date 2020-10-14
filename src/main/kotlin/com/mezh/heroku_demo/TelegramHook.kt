@@ -31,7 +31,7 @@ class TelegramHook(
         val sendMessage = SendMessage()
         sendMessage.text = messageService.findLastMessage()
         sendMessage.chatId = message?.chatId.toString()
-        messageService.saveMessage(message?.text)
+        messageService.saveMessage(message)
         return sendMessage
     }
 
