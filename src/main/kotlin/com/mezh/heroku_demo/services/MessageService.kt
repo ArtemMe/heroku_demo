@@ -15,7 +15,7 @@ class MessageService(
                         id = message?.messageId?.toInt(),
                         message = message?.text,
                         userId = getUserId(message),
-                        dateTime = message?.date
+                        dateTime = message?.date?.toInt()
                 )
         )
     }
