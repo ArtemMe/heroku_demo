@@ -37,9 +37,9 @@ class MessageService(
     fun sendResponseWithButtons(message: Message?) : SendMessage {
         val messageText = message?.text
 
-        if(messageText == "/start") {
+        if(messageText.toString().trim() == "/start") {
             return SendMessage()
-                    .setChatId(message.chatId)
+                    .setChatId(message?.chatId)
                     .setText("Пример")
                     .setReplyMarkup(buttonService.createButtons())
         } else {
@@ -56,8 +56,6 @@ class MessageService(
         } else {
             return replyLastMessage(message)
         }
-
-        return sendMessage
     }
 
     fun replyLastMessage(message: Message?) : SendMessage {
