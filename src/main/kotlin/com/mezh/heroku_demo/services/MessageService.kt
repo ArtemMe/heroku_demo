@@ -22,43 +22,37 @@ class MessageService(
         )
     }
 
-    fun findLastMessage() : String? {
+    fun findLastMessage(): String? {
         val messageList = messageRepository.findAll()
-        if(messageList.isNotEmpty()) {
+        if (messageList.isNotEmpty()) {
             return messageList.last().message
         }
         return "not found last message"
     }
 
-    fun getUserId(message: Message?) : String? {
+    fun getUserId(message: Message?): String? {
         return message?.from?.userName
     }
 
-    fun sendResponseWithButtons(message: Message?) : SendMessage {
-        val messageText = message?.text
-
-        if(messageText.toString().trim() == "/start") {
-            return SendMessage()
-                    .setChatId(message?.chatId)
-                    .setText("Пример")
-                    .setReplyMarkup(buttonService.createButtons())
-        } else {
-            return replyLastMessage(message)
-        }
+    fun sendResponseWithButtons(message: Message?): SendMessage {
+        return SendMessage()
+                .setChatId(message?.chatId)
+                .setText("Пример")
+                .setReplyMarkup(buttonService.createButtons())
     }
 
-    fun createResponse(message: Message?) : SendMessage {
+    fun createResponse(message: Message?): SendMessage {
         this.saveMessage(message)
         val messageText = message?.text
 
-        if(messageText == "/start") {
+        if (messageText.toString().trim() == "/start") {
             return sendResponseWithButtons(message)
         } else {
             return replyLastMessage(message)
         }
     }
 
-    fun replyLastMessage(message: Message?) : SendMessage {
+    fun replyLastMessage(message: Message?): SendMessage {
         val sendMessage = SendMessage()
         sendMessage.text = this.findLastMessage()
         sendMessage.chatId = message?.chatId.toString()
