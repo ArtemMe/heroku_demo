@@ -28,11 +28,7 @@ class TelegramHook(
     }
 
     fun handleInputMessage(message: Message?) : SendMessage {
-        val sendMessage = SendMessage()
-        sendMessage.text = messageService.findLastMessage()
-        sendMessage.chatId = message?.chatId.toString()
-        messageService.saveMessage(message)
-        return sendMessage
+        return messageService.createResponse(message)
     }
 
     override fun getBotToken(): String? {
