@@ -1,8 +1,7 @@
 package com.mezh.heroku_demo
 
 import com.mezh.heroku_demo.config.BotConfig
-import com.mezh.heroku_demo.repository.MessageRepository
-import com.mezh.heroku_demo.services.MessageService
+import com.mezh.heroku_demo.services.DispatcherService
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.DefaultBotOptions
 import org.telegram.telegrambots.bots.TelegramWebhookBot
@@ -15,7 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 class TelegramHook(
         defaultBotOptions: DefaultBotOptions,
         val botConfig: BotConfig,
-        val messageService: MessageService
+        val dispatcherService: DispatcherService
 ) : TelegramWebhookBot(defaultBotOptions) {
 
     override fun onWebhookUpdateReceived(update: Update?): BotApiMethod<*> {
@@ -28,7 +27,7 @@ class TelegramHook(
     }
 
     fun handleInputMessage(message: Message?) : SendMessage {
-        return messageService.createResponse(message)
+        return dispatcherService.createResponse(message)
     }
 
     override fun getBotToken(): String? {

@@ -1,20 +1,20 @@
 package com.mezh.heroku_demo.handler
 
 import com.mezh.heroku_demo.dto.Command
-import com.mezh.heroku_demo.entity.MessageDto
 import com.mezh.heroku_demo.entity.UserEntity
 import com.mezh.heroku_demo.handler.dto.CommandContext
-import com.mezh.heroku_demo.repository.MessageRepository
-import com.mezh.heroku_demo.services.UserService
+import com.mezh.heroku_demo.services.*
 import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
-import java.lang.StringBuilder
 
 @Service
 class StatisticCommandHandler (
         private val userService: UserService,
-        private val messageRepository: MessageRepository
+        private val messageService: MessageService,
+        private val quickChartService: QuickChartService,
+        private val chartService: ChartService,
+        private val exerciseService: ExerciseService
 ) : CommandHadler {
     val TRAIN_ID = "Комплекс 1"
 
@@ -31,21 +31,16 @@ class StatisticCommandHandler (
         }
 
         val exeMap = createExerMap(findExercisesByTrainId(user.get()))
-        val msgList = getMessage(userId)
+        val msgList = messageService.getMessage(userId)
 
-        collectTreatmentByExercises(exeMap, msgList)
+        val exeMapWithTreatment = exerciseService.collectTreatmentByExercises(exeMap, msgList)
+        val ordinats = chartService.buildXYAxis(exeMapWithTreatment.get("жим лежа")!!)
+
+        val urlToChart = quickChartService.createChart(ordinats.first, ordinats.second, CHART_NAME)
 
         return SendMessage()
                 .setChatId(message.chatId)
-                .setText(createMsg(calculateAvg(exeMap)))
-    }
-
-    private fun createMsg(map: Map<String, Int>): String {
-        val result = StringBuilder()
-
-        map.entries.forEach { result.append(it.key + ": " + it.value).append("\n") }
-
-        return result.toString()
+                .setText(urlToChart)
     }
 
     private fun calculateAvg(exeMap: Map<String, MutableList<String>>) : Map<String, Int> {
@@ -75,46 +70,15 @@ class StatisticCommandHandler (
         return exercises?.exercises ?: emptySet()
     }
 
-    private fun collectTreatmentByExercises(exeMap: Map<String, MutableList<String>>, msgList: List<MessageDto>) {
-        var currentExe : String? = null
-        var wrongExercise = false
-
-        for(m in msgList) {
-            val text = m.message
-
-            if (exeMap.containsKey(text)) {
-                currentExe = text!!
-                wrongExercise = false
-                continue
-            } else if (!isTreatmentRecord(text)) {
-                wrongExercise = true
-                continue
-            }
-
-            if (isTreatmentRecord(text) && currentExe != null && !wrongExercise) {
-                exeMap.get(currentExe)?.add(text!!)
-            }
-        }
-    }
-
     override fun getType(): Command {
         return Command.STATISTIC
     }
 
-    private fun getMessage(userId: Int) : List<MessageDto> {
-        return messageRepository.findAll()
-                .filter { messageDto -> messageDto.userId == userId }
-                .sortedBy { messageDto -> messageDto.dateTime }
-    }
-
-    private fun isTreatmentRecord(text: String?) : Boolean {
-        text ?: return false
-        val regex = Regex(pattern = "\\d*:\\d*:\\d*")
-        return regex.containsMatchIn(input = text)
-    }
-
-
     private fun createExerMap(exercises: Set<String>) : Map<String, MutableList<String>> {
         return exercises.associateWith { mutableListOf<String>() }
+    }
+
+    companion object {
+        val CHART_NAME  = "СТАТИСТИКА"
     }
 }

@@ -5,6 +5,7 @@ import com.mezh.heroku_demo.entity.TrainingComplexEntity
 import com.mezh.heroku_demo.entity.UserEntity
 import com.mezh.heroku_demo.handler.dto.CommandContext
 import com.mezh.heroku_demo.repository.MessageRepository
+import com.mezh.heroku_demo.services.QuickChartService
 import com.mezh.heroku_demo.services.UserService
 import com.nhaarman.mockitokotlin2.any
 import org.junit.jupiter.api.Test
@@ -28,29 +29,29 @@ class StatisticCommandHandlerTest {
     lateinit var userService: UserService
     @MockBean
     lateinit var messageRepository: MessageRepository
+    @MockBean
+    lateinit var quickChartService: QuickChartService
 
     @Test
     fun `should return valid statistic`() {
         whenever(userService.findUserById(any())).thenReturn(getUser())
         whenever(messageRepository.findAll()).thenReturn(getMsgs())
+        whenever(quickChartService.createChart(any(), any(), any())).thenReturn("some url")
 
         val result = statisticCommandHandler.handle(createContext())
 
-        assert(result.text == "жим лежа: 30\n" +
-                "присед: 20\n" +
-                "пресс: 0\n")
+        assert(!result.text.isNullOrBlank())
     }
 
     @Test
     fun `should return valid statistic if list messages contains wrong exercises`() {
         whenever(userService.findUserById(any())).thenReturn(getUser())
         whenever(messageRepository.findAll()).thenReturn(getMsgsWithWrongExercises())
+        whenever(quickChartService.createChart(any(), any(), any())).thenReturn("some url")
 
         val result = statisticCommandHandler.handle(createContext())
 
-        assert(result.text == "жим лежа: 30\n" +
-                "присед: 20\n" +
-                "пресс: 0\n")
+        assert(!result.text.isNullOrBlank())
     }
 
     private fun createContext(): CommandContext {
