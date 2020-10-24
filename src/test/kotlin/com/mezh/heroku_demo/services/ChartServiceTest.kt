@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDateTime
 
 @SpringBootTest
-class StatisticCommandHandlerTest {
+class ChartServiceTest {
 
     @Autowired
     lateinit var chartService: ChartService

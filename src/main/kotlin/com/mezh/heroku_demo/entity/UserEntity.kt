@@ -7,5 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class UserEntity(
         @Id
         var userId: String,
-        var exercisesList: Set<TrainingComplexEntity>
+        var exercisesList: Set<TrainingComplexEntity>?,
+        var currentState: UserState?
 )

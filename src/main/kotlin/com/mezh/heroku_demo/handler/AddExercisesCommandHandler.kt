@@ -27,7 +27,7 @@ class AddExercisesCommandHandler(
 
         if (userOpt.isPresent) {
             val user = userOpt.get()
-            val complex = user.exercisesList.find { c -> c.name == TRAIN_ID }
+            val complex = user.exercisesList?.find { c -> c.name == TRAIN_ID }
             val newUser = buildUserEntity(user.userId, TRAIN_ID, complex?.exercises?.union(exercises) as Set<String>)
             userService.save(newUser)
         } else {
@@ -66,7 +66,8 @@ class AddExercisesCommandHandler(
 
         return UserEntity(
                 userId = id,
-                exercisesList = setOf(TrainingComplexEntity(trainName, exercises))
+                exercisesList = setOf(TrainingComplexEntity(trainName, exercises)),
+                currentState = null
         )
     }
 }

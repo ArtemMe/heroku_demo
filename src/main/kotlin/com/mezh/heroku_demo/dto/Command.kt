@@ -4,5 +4,6 @@ enum class Command(val desc: String) {
     START("/start"),
     ADD_EXERCISES("/add_exercises"),
     STATISTIC("/statistic"),
-    CHART("/chart");
+    CHART("/chart"),
+    ADD_COMPLEX("/add_complex");
 }

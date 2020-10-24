@@ -66,7 +66,7 @@ class StatisticCommandHandler (
     }
 
     private fun findExercisesByTrainId(user: UserEntity) : Set<String> {
-        val exercises =  user.exercisesList.find { e -> e.name == TRAIN_ID }
+        val exercises =  user.exercisesList?.find { e -> e.name == TRAIN_ID }
         return exercises?.exercises ?: emptySet()
     }
 
