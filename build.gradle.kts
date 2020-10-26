@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "2.3.3.RELEASE"
 	id("io.spring.dependency-management") version "1.0.10.RELEASE"
+    id("jacoco")
 	kotlin("jvm") version "1.3.72"
 	kotlin("plugin.spring") version "1.3.72"
 }
@@ -37,6 +38,44 @@ dependencies {
 	}
 
     testImplementation ("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
+
+}
+
+jacoco {
+    toolVersion = "0.8.6"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.isEnabled = false
+        csv.isEnabled = false
+        html.isEnabled = true
+        html.destination = file("$buildDir/reports/coverage")
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = "CLASS"
+            limit {
+                minimum = "0.8".toBigDecimal()
+            }
+            limit {
+                counter = "INSTRUCTION"
+                minimum = "0.7".toBigDecimal()
+            }
+            limit {
+                counter = "METHOD"
+                minimum ="0.7".toBigDecimal()
+            }
+            limit {
+                counter = "BRANCH"
+                minimum = "0.7".toBigDecimal()
+            }
+        }
+    }
 }
 
 tasks.withType<Test> {
@@ -49,3 +88,4 @@ tasks.withType<KotlinCompile> {
 		jvmTarget = "11"
 	}
 }
+

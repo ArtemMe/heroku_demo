@@ -1,5 +1,7 @@
 package com.mezh.heroku_demo.handler
 
+import com.mezh.heroku_demo.TestData.Companion.getMsgs
+import com.mezh.heroku_demo.TestData.Companion.getMsgsWithWrongExercises
 import com.mezh.heroku_demo.entity.MessageDto
 import com.mezh.heroku_demo.entity.TrainingComplexEntity
 import com.mezh.heroku_demo.entity.UserEntity
@@ -26,15 +28,12 @@ class StatisticCommandHandlerTest {
     @Autowired
     lateinit var statisticCommandHandler: StatisticCommandHandler
     @MockBean
-    lateinit var userService: UserService
-    @MockBean
     lateinit var messageRepository: MessageRepository
     @MockBean
     lateinit var quickChartService: QuickChartService
 
     @Test
     fun `should return valid statistic`() {
-        whenever(userService.findUserById(any())).thenReturn(getUser())
         whenever(messageRepository.findAll()).thenReturn(getMsgs())
         whenever(quickChartService.createChart(any(), any(), any())).thenReturn("some url")
 
@@ -45,7 +44,6 @@ class StatisticCommandHandlerTest {
 
     @Test
     fun `should return valid statistic if list messages contains wrong exercises`() {
-        whenever(userService.findUserById(any())).thenReturn(getUser())
         whenever(messageRepository.findAll()).thenReturn(getMsgsWithWrongExercises())
         whenever(quickChartService.createChart(any(), any(), any())).thenReturn("some url")
 
@@ -55,7 +53,7 @@ class StatisticCommandHandlerTest {
     }
 
     private fun createContext(): CommandContext {
-        return CommandContext(createInputMsg())
+        return CommandContext(createInputMsg(), getUser())
     }
 
     private fun createInputMsg(): Message {
@@ -65,38 +63,12 @@ class StatisticCommandHandlerTest {
         return msg
     }
 
-    private fun getMsgs(): MutableList<MessageDto> {
-        return mutableListOf(
-                MessageDto("1",100, "жим лежа", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "присед", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970)
-        )
-    }
-
-    private fun getMsgsWithWrongExercises(): MutableList<MessageDto> {
-        return mutableListOf(
-                MessageDto("1",100, "странное упражнение которого нет в списке", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "жим лежа", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "присед", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970),
-                MessageDto("1",100, "1:20:10", 1603119970)
-        )
-    }
-
-    private fun getUser(): Optional<UserEntity>? {
-        return Optional.of(UserEntity(
+    private fun getUser(): UserEntity {
+        return UserEntity(
                 userId = "100",
-                exercisesList = setOf(TrainingComplexEntity("Комплекс 1", setOf("жим лежа", "присед", "пресс")))
-        ))
+                exercisesList = setOf(TrainingComplexEntity("Комплекс 1", setOf("жим лежа", "присед", "пресс"))),
+                currentState = null
+        )
     }
 
 

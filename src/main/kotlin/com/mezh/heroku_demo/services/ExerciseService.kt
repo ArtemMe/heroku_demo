@@ -13,6 +13,7 @@ class ExerciseService {
         var currentExe : String? = null
         var wrongExercise = false
         val exeTreatmentMap = mutableMapOf<String, MutableList<Treatment?>>()
+        var treatmentCounter = 0
 
         for(m in msgList) {
             val text = m.message
@@ -20,6 +21,7 @@ class ExerciseService {
             if (exeMap.containsKey(text)) {
                 currentExe = text!!
                 wrongExercise = false
+                treatmentCounter++
                 continue
             } else if (!isTreatmentRecord(text)) {
                 wrongExercise = true
@@ -27,24 +29,30 @@ class ExerciseService {
             }
 
             if (isTreatmentRecord(text) && currentExe != null && !wrongExercise) {
-                exeTreatmentMap
-                        .getOrPut(currentExe, { mutableListOf(getTreatment(text!!, m.dateTime!!)) })
-                        .add(getTreatment(text!!, m.dateTime!!))
+                val treatmentList = exeTreatmentMap[currentExe]
+
+                if(treatmentList == null) {
+                    exeTreatmentMap[currentExe] = mutableListOf(getTreatment(text!!, m.dateTime!!, SHIFT_NUMBER_COUNTER))
+                } else {
+                    treatmentList.add(getTreatment(text!!, m.dateTime!!, treatmentList.size + SHIFT_NUMBER_COUNTER))
+                    exeTreatmentMap[currentExe] = treatmentList
+                }
+
             }
         }
 
         return exeTreatmentMap
     }
 
-    private fun getTreatment(str: String, unixTime: Int): Treatment? {
+    private fun getTreatment(str: String, unixTime: Int, treatmentNumber: Int): Treatment? {
         val strArr = str.split(":")
 
-        if (strArr.size == 2) {
-            return Treatment(strArr[0].toInt(), strArr[1].toInt(), null, LocalDateTime.ofEpochSecond(unixTime.toLong(), 0, ZoneOffset.UTC))
+        if (strArr.size == 1) {
+            return Treatment(treatmentNumber, strArr[0].toInt(), null, LocalDateTime.ofEpochSecond(unixTime.toLong(), 0, ZoneOffset.UTC))
         }
 
-        if (strArr.size == 3) {
-            return Treatment(strArr[0].toInt(), strArr[1].toInt(), strArr[2].toInt(), LocalDateTime.ofEpochSecond(unixTime.toLong(), 0, ZoneOffset.UTC))
+        if (strArr.size == 2) {
+            return Treatment(treatmentNumber, strArr[1].toInt(), strArr[0].toInt(), LocalDateTime.ofEpochSecond(unixTime.toLong(), 0, ZoneOffset.UTC))
         }
 
         return null;
@@ -52,7 +60,12 @@ class ExerciseService {
 
     private fun isTreatmentRecord(text: String?) : Boolean {
         text ?: return false
-        val regex = Regex(pattern = "\\d*:\\d*:\\d*")
+        val regex = Regex(pattern = TREATMENT_PATTERN)
         return regex.containsMatchIn(input = text)
+    }
+
+    companion object {
+        const val TREATMENT_PATTERN = "\\d*:\\d*"
+        const val SHIFT_NUMBER_COUNTER = 1
     }
 }
