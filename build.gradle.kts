@@ -38,6 +38,8 @@ dependencies {
 	}
 
     testImplementation ("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
+    testImplementation ("org.testcontainers:testcontainers:1.15.0-rc2")
+    testImplementation ("org.testcontainers:mongodb:1.15.0-rc2")
 
 }
 
