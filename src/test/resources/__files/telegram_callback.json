@@ -1,0 +1,50 @@
+{
+  "update_id": 421021331,
+  "callback_query": {
+    "id": "1795191355715879809",
+    "from": {
+      "id": 417975558,
+      "is_bot": false,
+      "first_name": "Artem",
+      "last_name": "Mezhelovsky",
+      "username": "artemmezh",
+      "language_code": "en"
+    },
+    "message": {
+      "message_id": 426,
+      "from": {
+        "id": 780132152,
+        "is_bot": true,
+        "first_name": "niga",
+        "username": "mezh_artem_bot"
+      },
+      "chat": {
+        "id": 417975558,
+        "first_name": "Artem",
+        "last_name": "Mezhelovsky",
+        "username": "artemmezh",
+        "type": "private"
+      },
+      "date": 1603790515,
+      "text": "\u041f\u0440\u0438\u043c\u0435\u0440",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "\u0422\u044b\u043a",
+              "callback_data": "Button \"\u0422\u044b\u043a\" has been pressed"
+            }
+          ],
+          [
+            {
+              "text": "\u0422\u044b\u043a2",
+              "callback_data": "Button \"\u0422\u044b\u043a2\" has been pressed"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance": "8325130745597675319",
+    "data": "Button \"\u0422\u044b\u043a\" has been pressed"
+  }
+}

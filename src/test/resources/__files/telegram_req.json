@@ -1,0 +1,30 @@
+{
+  "update_id": 421021327,
+  "message": {
+    "message_id": 427,
+    "from": {
+      "id": 417975558,
+      "is_bot": false,
+      "first_name": "Artem",
+      "last_name": "Mezhelovsky",
+      "username": "artemmezh",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 417975558,
+      "first_name": "Artem",
+      "last_name": "Mezhelovsky",
+      "username": "artemmezh",
+      "type": "private"
+    },
+    "date": 1603790886,
+    "text": "/start",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 6,
+        "type": "bot_command"
+      }
+    ]
+  }
+}

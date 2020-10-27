@@ -78,6 +78,16 @@ tasks.jacocoTestCoverageVerification {
             }
         }
     }
+    classDirectories.setFrom(
+            sourceSets.main.get().output.asFileTree.matching {
+                // exclude main()
+                exclude("com/mezh/heroku_demo/HerokuDemoApplication**")
+                exclude("com/mezh/heroku_demo/dto/**")
+                exclude("com/mezh/heroku_demo/entity/**")
+                exclude("com/mezh/heroku_demo/handler/dto/**")
+                exclude("com/mezh/heroku_demo/controller/HelloWorldController**")
+            }
+    )
 }
 
 tasks.withType<Test> {
