@@ -22,7 +22,7 @@ class StatisticCommandHandler (
     private fun handleInternal(message: Message, user: UserEntity): SendMessage {
         val userId = message.from?.id!!
 
-        val exercise = parseExe(message.text)
+        val exercise = parseExercise(message.text)
                 ?: return createErrorMessage("Введите упражнение", message.chatId)
 
         val exerciseMap = createExerciseMap(findExercisesByTrainId(user))
@@ -47,30 +47,11 @@ class StatisticCommandHandler (
                 .setText(desc)
     }
 
-    private fun calculateAvg(exeMap: Map<String, MutableList<String>>) : Map<String, Int> {
-        return exeMap.entries.associateBy(keySelector = {it.key}, valueTransform = {calculateTotalSum(it.value)} )
-    }
+    private fun parseExercise(inputMsg: String?) : String? {
+        if(inputMsg == null) return null
+        if(inputMsg.length <= getType().desc.length) return null
 
-    private fun parseExe(inputMsg: String?) : String? {
-        return inputMsg?.substring(getType().desc.length + 1)?.trim()
-    }
-
-    private fun calculateTotalSum(values: MutableList<String>): Int {
-        return values.map { v -> getAmount(v) }.sum()
-    }
-
-    private fun getAmount(str: String) : Int {
-        val strArr = str.split(":")
-
-        if (strArr.size == 2) {
-            return (strArr[1]).toInt()
-        }
-
-        if (strArr.size == 3) {
-            return (strArr[2]).toInt()
-        }
-
-        return 0;
+        return inputMsg.substring(getType().desc.length + 1).trim()
     }
 
     private fun findExercisesByTrainId(user: UserEntity) : Set<String> {
@@ -87,6 +68,6 @@ class StatisticCommandHandler (
     }
 
     companion object {
-        val CHART_NAME  = "СТАТИСТИКА"
+        const val CHART_NAME  = "СТАТИСТИКА"
     }
 }

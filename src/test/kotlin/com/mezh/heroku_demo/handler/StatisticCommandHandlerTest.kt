@@ -52,13 +52,46 @@ class StatisticCommandHandlerTest {
         assert(!result.text.isNullOrBlank())
     }
 
-    private fun createContext(): CommandContext {
-        return CommandContext(createInputMsg(), getUser())
+    @Test
+    fun `should return error if exercises not found`() {
+        whenever(messageRepository.findAll()).thenReturn(getMsgsWithWrongExercises())
+        whenever(quickChartService.createChart(any(), any(), any())).thenReturn("some url")
+
+        val result = statisticCommandHandler.handle(createContextWithoutExercisesInUser())
+
+        assert(result.text == "У вас нет сохраненных упражнений")
     }
 
-    private fun createInputMsg(): Message {
+    @Test
+    fun `should return error if exercises not input`() {
+        whenever(messageRepository.findAll()).thenReturn(getMsgsWithWrongExercises())
+        whenever(quickChartService.createChart(any(), any(), any())).thenReturn("some url")
+
+        val result = statisticCommandHandler.handle(createContextWithoutExercisesInCommand())
+
+        assert(result.text == "Введите упражнение")
+    }
+
+    private fun createContextWithoutExercisesInCommand(): CommandContext {
+        return CommandContext(createInputMsg(STAT_WITHOUT_EXERCISE), getUser())
+    }
+
+    private fun createContextWithoutExercisesInUser(): CommandContext {
+        return CommandContext(createInputMsg(STAT_PRESS), getUserWithoutExercises())
+    }
+
+    private fun createContext(): CommandContext {
+        return CommandContext(createInputMsg(STAT_PRESS), getUser())
+    }
+
+    private fun createContextCustomUser(user: UserEntity): CommandContext {
+        return CommandContext(createInputMsg(STAT_PRESS), user)
+    }
+
+    private fun createInputMsg(exercise: String?): Message {
         val msg = mock(Message::class.java)
         `when`(msg.from).thenReturn(User(100, "", false, "", "", ""))
+        `when`(msg.text).thenReturn(exercise)
 
         return msg
     }
@@ -71,5 +104,16 @@ class StatisticCommandHandlerTest {
         )
     }
 
+    private fun getUserWithoutExercises(): UserEntity {
+        return UserEntity(
+                userId = "100",
+                exercisesList = null,
+                currentState = null
+        )
+    }
 
+    companion object {
+        val STAT_PRESS = "/stat жим лежа"
+        val STAT_WITHOUT_EXERCISE = "/stat"
+    }
 }
