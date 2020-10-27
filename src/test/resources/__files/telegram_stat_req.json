@@ -1,0 +1,36 @@
+{
+  "update_id": 421021327,
+  "message": {
+    "message_id": 427,
+    "from": {
+      "id": 100,
+      "is_bot": false,
+      "first_name": "Artem",
+      "last_name": "Mezhelovsky",
+      "username": "artemmezh",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 417975558,
+      "first_name": "Artem",
+      "last_name": "Mezhelovsky",
+      "username": "artemmezh",
+      "type": "private"
+    },
+    "date": 1603790886,
+    "text": "/stat жим лежа",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 6,
+        "type": "bot_command"
+      }
+    ]
+  }
+}
+
+{
+  "chat_id": "417975558",
+  "text": "{\"success\":true,\"url\":\"https://quickchart.io/chart/render/zf-3cbcc40c-92fb-4d4f-86b1-7bbc61529840\"}",
+  "method": "sendmessage"
+}

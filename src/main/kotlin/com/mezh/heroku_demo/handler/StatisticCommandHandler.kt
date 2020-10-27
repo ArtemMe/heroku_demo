@@ -15,8 +15,6 @@ class StatisticCommandHandler (
         private val chartService: ChartService,
         private val exerciseService: ExerciseService
 ) : CommandHadler {
-    val TRAIN_ID = "Комплекс 1"
-
     override fun handle(context: CommandContext): SendMessage {
         return handleInternal(context.message, context.user)
     }
@@ -28,6 +26,9 @@ class StatisticCommandHandler (
                 ?: return createErrorMessage("Введите упражнение", message.chatId)
 
         val exerciseMap = createExerciseMap(findExercisesByTrainId(user))
+
+        if(exerciseMap.isNullOrEmpty()) return createErrorMessage("У вас нет сохраненных упражнений", message.chatId)
+
         val msgList = messageService.getMessage(userId)
 
         val exeMapWithTreatment = exerciseService.collectTreatmentByExercises(exerciseMap, msgList)
@@ -73,8 +74,8 @@ class StatisticCommandHandler (
     }
 
     private fun findExercisesByTrainId(user: UserEntity) : Set<String> {
-        val exercises =  user.exercisesList?.find { e -> e.name == TRAIN_ID }
-        return exercises?.exercises ?: emptySet()
+        val exercises =  user.exercisesList?.flatMap { e -> e.exercises }?.toSet()
+        return exercises ?: emptySet()
     }
 
     override fun getType(): Command {
