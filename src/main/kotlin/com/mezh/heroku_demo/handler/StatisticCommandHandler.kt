@@ -27,11 +27,17 @@ class StatisticCommandHandler (
 
         val exerciseMap = createExerciseMap(findExercisesByTrainId(user))
 
-        if(exerciseMap.isNullOrEmpty()) return createErrorMessage("У вас нет сохраненных упражнений", message.chatId)
+        if(exerciseMap.isNullOrEmpty())
+            return createErrorMessage("У вас нет сохраненных упражнений", message.chatId)
 
         val msgList = messageService.getMessage(userId)
 
         val exeMapWithTreatment = exerciseService.collectTreatmentByExercises(exerciseMap, msgList)
+        val exerciseInMap = exeMapWithTreatment[exercise]
+
+        if(exerciseInMap == null || exerciseInMap.isEmpty())
+            return createErrorMessage("Не найдены подходы для данного упражнения", message.chatId)
+
         val ordinates = chartService.buildXYAxis(exeMapWithTreatment[exercise]!!)
 
         val urlToChart = quickChartService.createChart(ordinates.first, ordinates.second, CHART_NAME)
