@@ -31,4 +31,24 @@ class ButtonService {
 
         return inlineKeyboardMarkup
     }
+
+    fun createListButtons(listButtonNameCallback: Set<String>) : InlineKeyboardMarkup {
+        val inlineKeyboardMarkup = InlineKeyboardMarkup()
+        inlineKeyboardMarkup.keyboard = createListButtonsFromSet(listButtonNameCallback);
+        return inlineKeyboardMarkup
+    }
+
+    private fun createButton(buttonName: String, callBack: String) : InlineKeyboardButton {
+        val inlineKeyboardButton = InlineKeyboardButton()
+        inlineKeyboardButton.text = buttonName
+        inlineKeyboardButton.callbackData = callBack
+
+        return inlineKeyboardButton
+    }
+
+    private fun createListButtonsFromSet(listButtonNameCallback: Set<String>) : List<List<InlineKeyboardButton>> {
+        return listButtonNameCallback
+                .map { listOf(createButton(it, it))}
+                .toList()
+    }
 }

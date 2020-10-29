@@ -18,7 +18,7 @@ class UserService (
         return userRepository.save(user)
     }
 
-    fun updateState(user: UserEntity, userState: UserState): UserEntity {
+    fun updateState(user: UserEntity, userState: UserState?): UserEntity {
         user.currentState = userState
         return userRepository.save(user)
     }

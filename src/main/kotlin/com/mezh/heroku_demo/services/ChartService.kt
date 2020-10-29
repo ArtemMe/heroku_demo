@@ -22,8 +22,7 @@ class ChartService {
                 first = false
                 counter++
                 continue
-            }
-
+            }//todo  попрвить и для упражнений без веса
             if(nextTreatment.dateTime.dayOfMonth - currentTreatment!!.dateTime.dayOfMonth == 0) {
                 if(nextTreatment.weight!! > currentTreatment.weight!!) maxWeight = nextTreatment.weight
                 else maxWeight = currentTreatment.weight!!

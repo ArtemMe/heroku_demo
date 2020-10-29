@@ -41,7 +41,8 @@ class ExerciseServiceTest {
     private fun getExerciseMap(): Map<String, MutableList<String>> {
         return mapOf(
                 Pair("жим лежа" , mutableListOf()),
-                Pair("присед" , mutableListOf())
+                Pair("присед" , mutableListOf()),
+                Pair("Подтягивания" , mutableListOf())
         )
     }
 
@@ -77,6 +78,11 @@ class ExerciseServiceTest {
                 Pair("присед" , mutableListOf(
                         Treatment(1, 10,20, LocalDateTime.of(2020, 1, 1, 2, 15)),
                         Treatment(2, 10,20, LocalDateTime.of(2020, 1, 1, 2, 30))
+                )),
+                Pair("Подтягивания" , mutableListOf(
+                        Treatment(1, 10,null, LocalDateTime.of(2020, 1, 1, 2, 30)),
+                        Treatment(2, 8,null, LocalDateTime.of(2020, 1, 1, 2, 30)),
+                        Treatment(3, 6,null, LocalDateTime.of(2020, 1, 1, 2, 30))
                 ))
         )
     }

@@ -1,13 +1,17 @@
 package com.mezh.heroku_demo.services
 
 import com.mezh.heroku_demo.entity.MessageDto
+import com.mezh.heroku_demo.entity.TrainingComplexEntity
 import com.mezh.heroku_demo.handler.dto.Treatment
 import org.springframework.stereotype.Service
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @Service
-class ExerciseService {
+class ExerciseService (
+        val buttonService: ButtonService
+) {
     fun collectTreatmentByExercises(exeMap: Map<String, MutableList<String>>, msgList: List<MessageDto>)
             : MutableMap<String, MutableList<Treatment?>> {
         var currentExe : String? = null
@@ -44,6 +48,14 @@ class ExerciseService {
         return exeTreatmentMap
     }
 
+    fun createListButtonsExercises(exercisesList: Set<TrainingComplexEntity>?) : InlineKeyboardMarkup? {
+        if(exercisesList == null || exercisesList.isEmpty()) return null
+
+        val allExercise = exercisesList.flatMap { it.exercises }.toSet()
+
+        return buttonService.createListButtons(allExercise)
+    }
+
     private fun getTreatment(str: String, unixTime: Int, treatmentNumber: Int): Treatment? {
         val strArr = str.split(":")
 
@@ -61,11 +73,13 @@ class ExerciseService {
     private fun isTreatmentRecord(text: String?) : Boolean {
         text ?: return false
         val regex = Regex(pattern = TREATMENT_PATTERN)
-        return regex.containsMatchIn(input = text)
+        val regexWithoutWeight = Regex(pattern = TREATMENT_PATTERN_WITHOUT_WEIGHT)
+        return regex.containsMatchIn(text) || regexWithoutWeight.containsMatchIn(text)
     }
 
     companion object {
-        const val TREATMENT_PATTERN = "\\d*:\\d*"
+        const val TREATMENT_PATTERN = "^\\d+:\\d+\$"
+        const val TREATMENT_PATTERN_WITHOUT_WEIGHT = "^\\d+$"
         const val SHIFT_NUMBER_COUNTER = 1
     }
 }

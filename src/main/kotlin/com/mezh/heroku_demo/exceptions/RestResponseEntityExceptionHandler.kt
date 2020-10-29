@@ -23,6 +23,6 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
                 .setText(logicException.message)
 
         return handleExceptionInternal(ex, bodyOfResponse,
-                HttpHeaders(), HttpStatus.CONFLICT, request!!)
+                HttpHeaders(), HttpStatus.OK, request!!)
     }
 }
