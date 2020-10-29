@@ -52,17 +52,23 @@ class DispatcherService(
 
         if (messageText.toString().trim() == Command.START.desc) {
             return getHandler(Command.START).handle(CommandContext(message, user))
-        } else if (messageText.toString().contains(Command.ADD_EXERCISES.desc, true)) {
+        } else if (checkCommand(Command.ADD_EXERCISES, messageText) || checkState(state, Command.ADD_EXERCISES)) {
             return getHandler(Command.ADD_EXERCISES).handle(CommandContext(message, user))
         } else if (messageText.toString().contains(Command.STATISTIC.desc, true)) {
             return getHandler(Command.STATISTIC).handle(CommandContext(message, user))
         } else if (messageText.toString().contains(Command.ADD_COMPLEX.desc, true) || checkState(state, Command.ADD_COMPLEX)) {
             return getHandler(Command.ADD_COMPLEX).handle(CommandContext(message, user))
+        } else if (messageText.toString().contains(Command.MENU.desc, true)) {
+            return getHandler(Command.MENU).handle(CommandContext(message, user))
         } else {
             return replyLastMessage(message)
         }
     }
 
+    fun checkCommand(command: Command, msg: String?) : Boolean {
+        if(msg == null) return false
+        return msg.contains(command.desc, true) || msg.contains(command.menuName, true)
+    }
 
     fun checkState(state: UserState?, command: Command) : Boolean {
         if(state != null) {

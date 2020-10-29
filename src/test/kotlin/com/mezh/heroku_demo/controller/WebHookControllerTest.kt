@@ -2,9 +2,8 @@ package com.mezh.heroku_demo.controller
 
 import com.mezh.heroku_demo.BaseIntegrationTest
 import com.mezh.heroku_demo.StringLoader
-import com.mezh.heroku_demo.entity.MessageDto
-import com.mezh.heroku_demo.entity.TrainingComplexEntity
-import com.mezh.heroku_demo.entity.UserEntity
+import com.mezh.heroku_demo.dto.Command
+import com.mezh.heroku_demo.entity.*
 import com.mezh.heroku_demo.repository.MessageRepository
 import com.mezh.heroku_demo.repository.UserRepository
 import org.hamcrest.Matchers
@@ -51,6 +50,44 @@ class WebHookControllerTest : BaseIntegrationTest() {
                 .andExpect(MockMvcResultMatchers.jsonPath("\$.text", Matchers.containsString("{\"success\":true")))
     }
 
+    @Test
+    fun `should successful return message for INPUT_EXE state`() {
+        generateUserRecord()
+
+        val result = mockMvc.perform(MockMvcRequestBuilders.post("/")
+                .contentType("application/json")
+                .content(StringLoader.fromClasspath("/__files/telegram_add_exe_req.json")))
+
+        result
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.jsonPath("\$.text", Matchers.containsString("Введите упражнения через запятую:")))
+
+        val user = userRepository.findById("100")
+
+        assert(user.isPresent)
+        assert(user.get().currentState != null)
+        assert(user.get().currentState?.type == StateType.INPUT_EXE)
+    }
+
+    @Test
+    fun `should successful add exercises to default complex`() {
+        generateUserRecordWithState(UserState(StateType.INPUT_EXE, Command.ADD_EXERCISES.name, null))
+
+        val result = mockMvc.perform(MockMvcRequestBuilders.post("/")
+                .contentType("application/json")
+                .content(StringLoader.fromClasspath("/__files/telegram_add_exe_2_req.json")))
+
+        result
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.jsonPath("\$.text", Matchers.containsString("Добавлены упражнения:\n" +
+                        " жим лежа")))
+
+        val user = userRepository.findById("100")
+
+        assert(user.isPresent)
+        assert(user.get().currentState == null)
+    }
+
     fun generateMessageRecords() {
         messageRepository.saveAll(listOf(
                 MessageDto("1", 100, "жим лежа", 1577840400),
@@ -76,6 +113,14 @@ class WebHookControllerTest : BaseIntegrationTest() {
                 "100",
                 exercisesList = setOf(TrainingComplexEntity("Complex_1", setOf("жим лежа", "присед"))),
                 currentState = null
+        ))
+    }
+
+    private fun generateUserRecordWithState(userState: UserState) {
+        userRepository.save(UserEntity(
+                "100",
+                exercisesList = setOf(TrainingComplexEntity("Complex_1", setOf("жим лежа", "присед"))),
+                currentState = userState
         ))
     }
 }

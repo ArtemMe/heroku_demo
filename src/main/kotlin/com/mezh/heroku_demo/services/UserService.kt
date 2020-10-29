@@ -1,6 +1,7 @@
 package com.mezh.heroku_demo.services
 
 import com.mezh.heroku_demo.entity.UserEntity
+import com.mezh.heroku_demo.entity.UserState
 import com.mezh.heroku_demo.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.util.*
@@ -14,6 +15,11 @@ class UserService (
     }
 
     fun save(user: UserEntity): UserEntity {
+        return userRepository.save(user)
+    }
+
+    fun updateState(user: UserEntity, userState: UserState): UserEntity {
+        user.currentState = userState
         return userRepository.save(user)
     }
 }
