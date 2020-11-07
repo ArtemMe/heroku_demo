@@ -9,11 +9,10 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
-
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
 
-    @ExceptionHandler(value = [LogicException::class])
+    @ExceptionHandler(value = [LogicException::class, Exception::class])
     protected fun handleConflict(
             ex: RuntimeException?, request: WebRequest?): ResponseEntity<Any> {
 

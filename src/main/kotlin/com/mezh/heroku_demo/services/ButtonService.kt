@@ -1,5 +1,8 @@
 package com.mezh.heroku_demo.services
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.mezh.heroku_demo.dto.Command
+import com.mezh.heroku_demo.handler.dto.CallbackExerciseDto
 import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
@@ -41,7 +44,7 @@ class ButtonService {
     private fun createButton(buttonName: String, callBack: String) : InlineKeyboardButton {
         val inlineKeyboardButton = InlineKeyboardButton()
         inlineKeyboardButton.text = buttonName
-        inlineKeyboardButton.callbackData = callBack
+        inlineKeyboardButton.callbackData = convertToJson(Command.STATISTIC.name, callBack)
 
         return inlineKeyboardButton
     }
@@ -50,5 +53,11 @@ class ButtonService {
         return listButtonNameCallback
                 .map { listOf(createButton(it, it))}
                 .toList()
+    }
+
+    private fun convertToJson(handlerType: String, value: String) : String {
+        return "$handlerType|$value"
+//        val objectMapper = ObjectMapper()
+//        return objectMapper.writeValueAsString(CallbackExerciseDto(handlerType, value))
     }
 }

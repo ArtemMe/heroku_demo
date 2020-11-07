@@ -84,6 +84,10 @@ class AddComplexCommandHandler(
         return Command.ADD_COMPLEX
     }
 
+    override fun getStateType(): StateType {
+       return StateType.INPUT_COMPLEX_NAME
+    }
+
     private fun buildUserEntity(
             id: String, trainName: String, currentComplexes: Set<TrainingComplexEntity>?, exercises: Set<String>): UserEntity {
 

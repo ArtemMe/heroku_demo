@@ -1,6 +1,7 @@
 package com.mezh.heroku_demo.handler
 
 import com.mezh.heroku_demo.dto.Command
+import com.mezh.heroku_demo.entity.StateType
 import com.mezh.heroku_demo.handler.dto.CommandContext
 import com.mezh.heroku_demo.services.ButtonService
 import org.springframework.stereotype.Service
@@ -26,6 +27,10 @@ class StartCommandHandler (
 
     override fun getType(): Command {
         return COMMAND_TYPE
+    }
+
+    override fun getStateType(): StateType {
+        return StateType.START
     }
 
 }

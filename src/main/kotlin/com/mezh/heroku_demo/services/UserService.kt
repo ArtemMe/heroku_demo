@@ -19,7 +19,8 @@ class UserService (
     }
 
     fun updateState(user: UserEntity, userState: UserState?): UserEntity {
-        user.currentState = userState
-        return userRepository.save(user)
+        val actualUser = findUserById(user.userId.toInt()).get()
+        actualUser.currentState = userState
+        return userRepository.save(actualUser)
     }
 }

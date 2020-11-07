@@ -5,8 +5,7 @@ import com.mezh.heroku_demo.entity.StateType
 import com.mezh.heroku_demo.handler.dto.CommandContext
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
-interface CommandHadler {
+interface DialogHandler {
     fun handle(context: CommandContext) : SendMessage
-    fun getType() : Command
     fun getStateType() : StateType
 }

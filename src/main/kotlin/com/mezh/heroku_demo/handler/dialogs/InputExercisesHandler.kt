@@ -1,4 +1,4 @@
-package com.mezh.heroku_demo.handler
+package com.mezh.heroku_demo.handler.dialogs
 
 import com.mezh.heroku_demo.dto.Command
 import com.mezh.heroku_demo.entity.StateType
@@ -7,44 +7,38 @@ import com.mezh.heroku_demo.entity.UserEntity
 import com.mezh.heroku_demo.entity.UserState
 import com.mezh.heroku_demo.exceptions.ExceptionType
 import com.mezh.heroku_demo.exceptions.HandlerException
+import com.mezh.heroku_demo.handler.CommandHadler
+import com.mezh.heroku_demo.handler.DialogHandler
+import com.mezh.heroku_demo.handler.DialogHandlerFactory
 import com.mezh.heroku_demo.handler.dto.CommandContext
-import com.mezh.heroku_demo.services.AddExerciseMenuService
+import com.mezh.heroku_demo.services.MainMenuService
 import com.mezh.heroku_demo.services.UserService
 import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 
 @Service
-class AddExercisesCommandHandler(
+class InputExercisesHandler(
         private val userService: UserService,
-        private val addExerciseMenuService: AddExerciseMenuService,
-        private val dialogHandlerFactory: DialogHandlerFactory
-) : CommandHadler {
-    val TRAIN_COMPLEX_DEFAULT = "default"
+        private val mainMenuService: MainMenuService
+) : DialogHandler {
 
     override fun handle(context: CommandContext): SendMessage {
-        return handleInternal(context)
+        return handleInternal(context.message, context.user)
     }
 
-    private fun handleInternal(context: CommandContext): SendMessage {
-        val user = context.user
-        val message = context.message
+    private fun handleInternal(message: Message, user: UserEntity): SendMessage {
+
         val prevState = user.currentState!!.type
 
-        if(prevState == StateType.MAIN_MENU) {
-            userService.updateState(user, UserState(StateType.INPUT_EXE, getType().name, null))
-            return createSimpleResponse(message.chatId, "Введите упражнения через запятую:")
-        }
-
         if(prevState == StateType.INPUT_EXE) {
-            val sendMessage = dialogHandlerFactory.getHandler(prevState).handle(context)
-            userService.updateState(user, null)
+            val sendMessage = handleInputExercises(message, user)
             return sendMessage
         }
 
         return SendMessage()
                 .setChatId(message.chatId)
-                .setText("Вы еще не закончили другой диалог. Нажмите \"Отмена\" для завершения диалога...")
+                .setText("Неизвестное состояние...")
     }
 
     private fun handleInputExercises(msg: Message, user: UserEntity): SendMessage {
@@ -63,9 +57,7 @@ class AddExercisesCommandHandler(
 
         val formattedExe = getFormattedString(exercises)
 
-        return SendMessage()
-                .setChatId(msg.chatId)
-                .setText("Добавлены упражнения:\n $formattedExe")
+        return createSimpleResponse(msg.chatId,"Добавлены упражнения:\n $formattedExe")
     }
 
     private fun getComplexOrCreateDefault(user: UserEntity) : TrainingComplexEntity {
@@ -77,7 +69,7 @@ class AddExercisesCommandHandler(
     }
 
     private fun createSimpleResponse(chatId: Long, text: String) : SendMessage {
-        return addExerciseMenuService.getMenu(chatId, text)
+        return mainMenuService.getMenu(chatId, text)
     }
 
     private fun getExercisesList(text: String): Set<String> {
@@ -98,12 +90,8 @@ class AddExercisesCommandHandler(
         return builder.toString()
     }
 
-    override fun getType(): Command {
-        return Command.ADD_EXERCISES
-    }
-
     override fun getStateType(): StateType {
-        return StateType.ADD_EXERCISE
+        return StateType.INPUT_EXE
     }
 
     private fun buildUserEntityCleanState(id: String, trainName: String, exercises: Set<String>): UserEntity {
@@ -117,5 +105,6 @@ class AddExercisesCommandHandler(
 
     companion object {
         const val EMPTY_EXERCISES = "Вы не ввели упражнения :("
+        const val TRAIN_COMPLEX_DEFAULT = "default"
     }
 }

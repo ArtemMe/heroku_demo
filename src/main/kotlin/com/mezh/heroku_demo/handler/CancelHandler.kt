@@ -10,24 +10,24 @@ import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 @Service
-class MainMenuHandler (
+class CancelHandler (
         val mainMenuService: MainMenuService,
         val userService: UserService
 ): CommandHadler {
     override fun handle(context: CommandContext): SendMessage {
-        userService.updateState(context.user, UserState(StateType.MAIN_MENU, getType().name, null))
+        userService.updateState(context.user, null)
         return mainMenuService.getMenu(context.message.chatId, MAIN_MENU_NAME)
     }
 
     override fun getType(): Command {
-        return Command.MENU
+        return Command.CANCEL
     }
 
     override fun getStateType(): StateType {
-        return StateType.MAIN_MENU
+        return StateType.CANCEL
     }
 
     companion object {
-        const val MAIN_MENU_NAME = "main menu"
+        const val MAIN_MENU_NAME = "Главное меню:"
     }
 }

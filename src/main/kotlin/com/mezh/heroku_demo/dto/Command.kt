@@ -7,5 +7,6 @@ enum class Command(val desc: String, val menuName: String) {
     CHART("/chart", "Покажи график"),
     ADD_COMPLEX("/add_complex","Добавить комплекс упражнений"),
     MENU("/menu", "Покажи главное меню"),
-    HELP("/help", "Помощь")
+    HELP("/help", "Помощь"),
+    CANCEL("/cancel", "Отмена")
 }
